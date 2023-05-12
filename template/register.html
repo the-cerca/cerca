@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Vérification de votre adresse e-mail</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body style="background-color: #F6F6F6;">
+    <h1>Hello {{.Username}}</h1>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 0 auto; max-width: 600px;">
+      <tr>
+        <td style="background-color: #FFFFFF; padding: 40px; text-align: center;">
+          <h1 style="font-size: 24px; margin-bottom: 30px;">Vérifiez votre adresse e-mail</h1>
+          <p style="font-size: 16px; margin-bottom: 30px;">Cliquez sur le bouton ci-dessous pour vérifier votre adresse e-mail et accéder à notre plateforme.</p>
+          <a href="http://localhost:3000/verify/{{.Token}}" style="background-color: #0073AA; color: #FFFFFF; display: inline-block; font-size: 16px; font-weight: bold; padding: 10px 20px; text-decoration: none; text-transform: uppercase;">Vérifier mon adresse e-mail</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="background-color: #FFFFFF; padding: 40px;">
+          <p style="font-size: 14px;">Si vous avez des questions ou avez besoin d'aide pour vérifier votre adresse e-mail, n'hésitez pas à nous contacter à <a href="mailto:support@example.com" style="color: #0073AA;">support@example.com</a>.</p>
+        </td>
+      </tr>
+    </table>
+ 

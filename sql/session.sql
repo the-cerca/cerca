@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS sessions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID,
+  token VARCHAR(100) NOT NULL UNIQUE,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
