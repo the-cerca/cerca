@@ -34,13 +34,13 @@ type User struct {
 	Firstname       string    `json:"last_name,omitempty"`
 	Lastname       string     `json:"username,omitempty"`
 	Username       string     `json:"user_name,omitempty"`
-	PasswordHashed string     `json:"password_hashed,omitempty"`
+	PasswordHashed string     `json:"-"`
 	Email          string     `json:"email,omitempty"`
 	Birthday       *time.Time `json:"birthday,omitempty"`
-	IsVerified     bool
-	IsFreelance    bool
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
+	IsVerified     bool       `json:"is_verified,omitempty"`
+	IsFreelance    bool       `json:"is_freelance,omitempty"`
+	CreatedAt      *time.Time `json:"created_at,omitempty"`
+	UpdatedAt      *time.Time `json:"updated_at,omitempty"`
 }
 
 type UserManager struct {

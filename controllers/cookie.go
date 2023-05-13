@@ -1,4 +1,3 @@
-
 package controllers
 
 import (
@@ -11,14 +10,13 @@ const (
 )
 
 func newCookie(name, value string) *http.Cookie {
-	cookie := http.Cookie{
-		Name:     name,
-		Value:    value,
-		Path:     "/",
-		HttpOnly: true,
-		Secure: true,
+	cookie := &http.Cookie{
+		Name:    name,
+		Value:   value,
+		Path:    "/",
+		MaxAge:  18000,
 	}
-	return &cookie
+	return cookie
 }
 
 func setCookie(w http.ResponseWriter, name, value string) {

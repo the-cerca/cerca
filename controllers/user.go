@@ -102,3 +102,8 @@ func (usc *UserC) UpdateUserData(w http.ResponseWriter, r *http.Request) {
 	}
 	utils.Encode(w, u)
 }
+
+func (usc *UserC)Test(w http.ResponseWriter, r *http.Request)  {
+	setCookie(w, "mycookie", "the cookie value ")
+	w.WriteHeader(200)
+}
