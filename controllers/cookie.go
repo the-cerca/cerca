@@ -15,7 +15,6 @@ func newCookie(name, value string) *http.Cookie {
 		Name:     name,
 		Value:    value,
 		Path:     "/",
-		MaxAge: 17261,
 		HttpOnly: true,
 		Secure: true,
 	}

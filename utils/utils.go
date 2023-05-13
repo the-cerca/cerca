@@ -11,7 +11,8 @@ import (
 )
 
 func Encode(w http.ResponseWriter, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
 }
 func Bytes(n int) ([]byte, error) {
