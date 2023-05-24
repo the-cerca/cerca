@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
+
 	"net/mail"
 	"strings"
 	"time"
@@ -18,20 +19,21 @@ var (
 	ErrEmailAlreadyUse      = errors.New("email already used")
 	ErrBadAddressFormat     = errors.New("errors on the address mail")
 	ErrUsernameNotAvailable = errors.New("username already used")
+	ErrUsernameNotFound     = errors.New("username not found")
 )
 
 type NewUser struct {
-	Firstname string     `json:"firstname,omitempty"`
-	Lastname  string     `json:"lastname,omitempty"`
-	Username  string     `json:"username,omitempty"`
-	Password  string     `json:"password,omitempty"`
-	Email     string     `json:"email,omitempty"`
+	Firstname string    `json:"firstname,omitempty"`
+	Lastname  string    `json:"lastname,omitempty"`
+	Username  string    `json:"username,omitempty"`
+	Password  string    `json:"password,omitempty"`
+	Email     string    `json:"email,omitempty"`
 	Birthday  time.Time `json:"birthday,omitempty"`
 }
 
 type User struct {
 	ID             string     `json:"id,omitempty"`
-	Firstname       string    `json:"last_name,omitempty"`
+	Firstname      string     `json:"last_name,omitempty"`
 	Lastname       string     `json:"username,omitempty"`
 	Username       string     `json:"user_name,omitempty"`
 	PasswordHashed string     `json:"-"`
@@ -55,8 +57,9 @@ type UserManager struct {
 func (um *UserManager) SignUp(firstname, lastname, username, password, email string, birthday time.Time) (*User, error) {
 	// Convert email to lowercase and parse email address
 	email = strings.ToLower(email)
-	lastname = strings.ToLower(lastname)
-	firstname = strings.ToLower(firstname)
+	lastname = strings.TrimSpace(lastname)
+	firstname = strings.TrimSpace(firstname)
+	username = strings.TrimSpace(username)
 	mail, err := mail.ParseAddress(email)
 	if err != nil {
 		return nil, ErrBadAddressFormat
@@ -83,7 +86,7 @@ func (um *UserManager) SignUp(firstname, lastname, username, password, email str
 		INSERT INTO users (firstname, lastname, username, password_hashed, email,birthday)
 		VALUES ($1, $2, $3, $4, $5,$6)
 		RETURNING *
-	`,firstname, lastname, username, hp, mail.Address, birthday).Scan(
+	`, firstname, lastname, username, hp, mail.Address, birthday).Scan(
 		&user.ID, &user.Firstname, &user.Lastname, &user.Username, &user.PasswordHashed,
 		&user.Email, &birthday, &user.IsVerified, &user.IsFreelance, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		return nil, err
@@ -91,12 +94,10 @@ func (um *UserManager) SignUp(firstname, lastname, username, password, email str
 	return &user, nil
 }
 
-func (um *UserManager) SignIn(password, email string) (*User, error) {
-	query := `select * from users where email=$1`
-	email = strings.ToLower(email)
+func (um *UserManager) SignIn(username, password string) (*User, error) {
 	var user User
-	if err := um.DB.QueryRow(query, email).Scan(&user.ID, &user.Firstname, &user.Lastname, &user.Username, &user.PasswordHashed, &user.Email, &user.IsVerified, &user.CreatedAt, &user.UpdatedAt); err != nil {
-		return nil, ErrEmailDoNotMatch
+	if err := um.DB.QueryRow(`select * from users where username=$1`, username).Scan(&user.ID, &user.Firstname, &user.Lastname, &user.Username, &user.PasswordHashed, &user.Email, &user.IsVerified, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		return nil, ErrUsernameNotFound
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHashed), []byte(password)); err != nil {
 		return nil, ErrPasswordDoNotMatch

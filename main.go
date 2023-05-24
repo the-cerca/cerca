@@ -2,12 +2,15 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
-	"github.com/go-chi/cors"
+
 	c "github.com/aleeXpress/cerca/controllers"
+	"github.com/aleeXpress/cerca/models"
 	m "github.com/aleeXpress/cerca/models"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	_ "github.com/lib/pq"
 )
 
@@ -31,6 +34,13 @@ func main() {
 		Usm: &m.SessionManager{DB: db},
 		Ms:  &m.MailManager{DB: db},
 	}
+	
+		u := models.UserManager{DB: db}
+		 us, err := u.SignIn("hat", "vvvvvvvvvv"); 
+		 if err != nil{
+			fmt.Println("ERREUR :", err)
+		}
+		fmt.Print("This is the user :", us.Birthday)
 	serviceC := c.ServiveC{
 		Im:      &m.ImageManager{DB: db},
 		Cs:      &m.CategoryManager{DB: db},

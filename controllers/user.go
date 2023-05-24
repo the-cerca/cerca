@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+
 	m "github.com/aleeXpress/cerca/models"
 	"github.com/aleeXpress/cerca/utils"
 	"github.com/go-chi/chi/v5"
@@ -29,32 +30,32 @@ func (usc *UserC) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 	// verifyToken, _ := usc.Ms.Create(u.ID)
 	// send := map[string]string{
-		// 	"Username": u.Username,
-		// 	"Token":    verifyToken,
-		// }
-		// err = usc.Ms.SendEmailVerification([]string{user.Email}, send)
-		// if err != nil {
-			// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			// }
-			setCookie(w, CookieSession,session.Token)
-			utils.Encode(w, u)
-		}
-		
-		func (usc *UserC) SignIn(w http.ResponseWriter, r *http.Request) {
-			var credentials struct {
-				Password string `json:"password"`
-				Email    string `json:"email"`
-			}
-			json.NewDecoder(r.Body).Decode(&credentials)
-			user, err := usc.Us.SignIn(credentials.Password, credentials.Email)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusNotFound)
-				return
-			}
-			if session, _ := usc.Usm.Create(user.ID); session != nil {
-				setCookie(w, CookieSession, session.Token)
-			}
-			utils.Encode(w, user)
+	// 	"Username": u.Username,
+	// 	"Token":    verifyToken,
+	// }
+	// err = usc.Ms.SendEmailVerification([]string{user.Email}, send)
+	// if err != nil {
+	// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	// }
+	setCookie(w, CookieSession, session.Token)
+	utils.Encode(w, u)
+}
+
+func (usc *UserC) SignIn(w http.ResponseWriter, r *http.Request) {
+	var credentials struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	json.NewDecoder(r.Body).Decode(&credentials)
+	user, err := usc.Us.SignIn(credentials.Username, credentials.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	if session, _ := usc.Usm.Create(user.ID); session != nil {
+		setCookie(w, CookieSession, session.Token)
+	}
+	utils.Encode(w, user)
 }
 
 // Check if the token exist,
@@ -103,7 +104,7 @@ func (usc *UserC) UpdateUserData(w http.ResponseWriter, r *http.Request) {
 	utils.Encode(w, u)
 }
 
-func (usc *UserC)Test(w http.ResponseWriter, r *http.Request)  {
+func (usc *UserC) Test(w http.ResponseWriter, r *http.Request) {
 	setCookie(w, "mycookie", "the cookie value ")
 	w.WriteHeader(200)
 }
