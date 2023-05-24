@@ -19,7 +19,7 @@ func (um *UserMiddleware)CurrentUser(next http.Handler) http.Handler  {
 		 user, err := um.Session.FindUserByCookie(coo)
 		 if err != nil {
 			next.ServeHTTP(w,r)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			http.Error(w, "User not found", http.StatusNotFound)
 			return
 		 }
 		 ctx = SetContextUser(ctx, user)

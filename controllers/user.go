@@ -28,15 +28,15 @@ func (usc *UserC) SignUp(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	// verifyToken, _ := usc.Ms.Create(u.ID)
-	// send := map[string]string{
-	// 	"Username": u.Username,
-	// 	"Token":    verifyToken,
-	// }
-	// err = usc.Ms.SendEmailVerification([]string{user.Email}, send)
-	// if err != nil {
-	// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	// }
+	verifyToken, _ := usc.Ms.Create(u.ID)
+	send := map[string]string{
+		"Username": u.Username,
+		"Token":    verifyToken,
+	}
+	err = usc.Ms.SendEmailVerification([]string{user.Email}, send)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 	setCookie(w, CookieSession, session.Token)
 	utils.Encode(w, u)
 }
@@ -104,7 +104,8 @@ func (usc *UserC) UpdateUserData(w http.ResponseWriter, r *http.Request) {
 	utils.Encode(w, u)
 }
 
-func (usc *UserC) Test(w http.ResponseWriter, r *http.Request) {
-	setCookie(w, "mycookie", "the cookie value ")
-	w.WriteHeader(200)
+func (usc *UserC) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	if u, _ := GetUserByContext(r.Context()); u != nil {
+		utils.Encode(w, u)
+	}
 }

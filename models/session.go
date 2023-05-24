@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"time"
-
 	"github.com/aleeXpress/cerca/utils"
 )
 

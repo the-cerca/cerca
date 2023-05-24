@@ -5,16 +5,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	c "github.com/aleeXpress/cerca/controllers"
-	"github.com/aleeXpress/cerca/models"
 	m "github.com/aleeXpress/cerca/models"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	_ "github.com/lib/pq"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load() ; err != nil { fmt.Println("env failed to load")}
 	cfg := m.PostgresConfig{
 		Host:     "localhost",
 		Port:     "5432",
@@ -34,13 +36,6 @@ func main() {
 		Usm: &m.SessionManager{DB: db},
 		Ms:  &m.MailManager{DB: db},
 	}
-	
-		u := models.UserManager{DB: db}
-		 us, err := u.SignIn("hat", "vvvvvvvvvv"); 
-		 if err != nil{
-			fmt.Println("ERREUR :", err)
-		}
-		fmt.Print("This is the user :", us.Birthday)
 	serviceC := c.ServiveC{
 		Im:      &m.ImageManager{DB: db},
 		Cs:      &m.CategoryManager{DB: db},
@@ -51,16 +46,15 @@ func main() {
 		Session: &m.SessionManager{DB: db},
 	}
 	r := chi.NewRouter()
-  r.Use(cors.Handler(cors.Options{
-    // AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
-    AllowedOrigins:   []string{"https://*", "http://localhost:3000"},
-    // AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
+	 r.Use(AuthenticationMiddleware.CurrentUser)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
     AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-    AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+    AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Cookie"},
     ExposedHeaders:   []string{"Link"},
     AllowCredentials: true,
-    MaxAge:           300, // Maximum value not ignored by any of major browsers
-  }))
+	}))
+
 	r.Post("/sign-up", userC.SignUp)
 	r.Post("/sign-in", userC.SignIn)
 	r.Get("/verify/{id}", userC.VerifyToken)
@@ -68,12 +62,13 @@ func main() {
 	r.Post("/forgetten-password", userC.ForgettenPassword)
 	r.Post("/reset-password", userC.ResetPassword)
 	r.Route("/", func(r chi.Router) {
-		r.Use(AuthenticationMiddleware.CurrentUser)
+		r.Get("/currentUser", userC.CurrentUser)
 		r.Post("/update-user", userC.UpdateUserData)
 		r.Post("/create-service", serviceC.CreateService)
 		r.Post("/update-service", serviceC.UpdateService)
 	})
 	log.Fatal(http.ListenAndServe(":8000", r))
+	fmt.Println(os.LookupEnv("smtp"))
 }
 
 func checkError(err error) {
@@ -81,3 +76,4 @@ func checkError(err error) {
 		log.Fatalf("%v", err)
 	}
 }
+

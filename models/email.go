@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"database/sql"
 	"html/template"
-	"os"
-
-	"time"
-
 	"net/smtp"
+	"os"
+	"time"
 
 	"github.com/aleeXpress/cerca/utils"
 )
@@ -47,7 +45,7 @@ func (mm *MailManager) SendEmailVerification(to []string, data interface{}) erro
 	}
 
 	headers := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";"
-	authen := smtp.PlainAuth("", "cercanotreply@gmail.com", os.Getenv("SMTP"), "smtp.gmail.com")
+	authen := smtp.PlainAuth("", "cercanotreply@gmail.com",os.Getenv("smtp"), "smtp.gmail.com")
 	mail := Mail{
 		Host: "smtp.gmail.com:587",
 		From: "cercanotreply@gmail.com",
@@ -113,7 +111,7 @@ func (mm *MailManager)GeneriqueEmailSender(path, subject string, To []string, da
 		return err
 	}
 	headers := "MIME-version: 1.0;\nContent-Type: text/html; charset=UTF-8;"
-	authen := smtp.PlainAuth("", "cercanotreply@gmail.com", os.Getenv("SMTP"), "smtp.gmail.com")
+	authen := smtp.PlainAuth("", "cercanotreply@gmail.com", os.Getenv("smtp"), "smtp.gmail.com")
 	mail := Mail{
 		Host: "smtp.gmail.com:587",
 		From: "cercanotreply@gmail.com",

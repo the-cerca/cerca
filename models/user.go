@@ -3,12 +3,9 @@ package models
 import (
 	"database/sql"
 	"errors"
-
-
 	"net/mail"
 	"strings"
 	"time"
-
 	"github.com/aleeXpress/cerca/utils"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -33,9 +30,9 @@ type NewUser struct {
 
 type User struct {
 	ID             string     `json:"id,omitempty"`
-	Firstname      string     `json:"last_name,omitempty"`
-	Lastname       string     `json:"username,omitempty"`
-	Username       string     `json:"user_name,omitempty"`
+	Firstname      string     `json:"firstname,omitempty"`
+	Lastname       string     `json:"lastname,omitempty"`
+	Username       string     `json:"username,omitempty"`
 	PasswordHashed string     `json:"-"`
 	Email          string     `json:"email,omitempty"`
 	Birthday       *time.Time `json:"birthday,omitempty"`
@@ -96,8 +93,10 @@ func (um *UserManager) SignUp(firstname, lastname, username, password, email str
 
 func (um *UserManager) SignIn(username, password string) (*User, error) {
 	var user User
-	if err := um.DB.QueryRow(`select * from users where username=$1`, username).Scan(&user.ID, &user.Firstname, &user.Lastname, &user.Username, &user.PasswordHashed, &user.Email, &user.IsVerified, &user.CreatedAt, &user.UpdatedAt); err != nil {
-		return nil, ErrUsernameNotFound
+	if err := um.DB.QueryRow(`select * from users where username=$1`, username).Scan(
+		&user.ID, &user.Firstname, &user.Lastname, &user.Username, &user.PasswordHashed,
+		&user.Email, &user.Birthday, &user.IsVerified, &user.IsFreelance, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		return nil, err
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHashed), []byte(password)); err != nil {
 		return nil, ErrPasswordDoNotMatch
