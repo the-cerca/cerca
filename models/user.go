@@ -25,7 +25,7 @@ type NewUser struct {
 	Username  string    `json:"username,omitempty"`
 	Password  string    `json:"password,omitempty"`
 	Email     string    `json:"email,omitempty"`
-	Birthday  time.Time `json:"birthday,omitempty"`
+	Birthday  *time.Time `json:"birthday,omitempty"`
 }
 
 type User struct {

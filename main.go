@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-
 	c "github.com/aleeXpress/cerca/controllers"
 	m "github.com/aleeXpress/cerca/models"
 	"github.com/go-chi/chi/v5"
@@ -58,17 +56,16 @@ func main() {
 	r.Post("/sign-up", userC.SignUp)
 	r.Post("/sign-in", userC.SignIn)
 	r.Get("/verify/{id}", userC.VerifyToken)
-
+	r.Get("/categories", serviceC.GetAllCategories)
 	r.Post("/forgetten-password", userC.ForgettenPassword)
 	r.Post("/reset-password", userC.ResetPassword)
 	r.Route("/", func(r chi.Router) {
 		r.Get("/currentUser", userC.CurrentUser)
-		r.Post("/update-user", userC.UpdateUserData)
 		r.Post("/create-service", serviceC.CreateService)
+		r.Post("/update-user", userC.UpdateUserData)
 		r.Post("/update-service", serviceC.UpdateService)
 	})
 	log.Fatal(http.ListenAndServe(":8000", r))
-	fmt.Println(os.LookupEnv("smtp"))
 }
 
 func checkError(err error) {

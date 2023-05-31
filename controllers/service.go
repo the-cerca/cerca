@@ -21,6 +21,7 @@ func (sc *ServiveC) CreateService(w http.ResponseWriter, r *http.Request) {
 	user, err := GetUserByContext(r.Context())
 	if err != nil {
 		InternalServerError(w)
+		return 
 	}
 	// Parse and create file 
 	r.ParseMultipartForm(10 << 20)
@@ -113,4 +114,21 @@ func (sc *ServiveC)UpdateService(w http.ResponseWriter, r *http.Request)  {
 	}
 	
 	utils.Encode(w, s)
+}
+
+
+func (sc *ServiveC)DeleteService(w http.ResponseWriter, r *http.Request)  {}
+
+func (sc *ServiveC)GetServices(w http.ResponseWriter, r *http.Request)  {}
+
+func (sc *ServiveC)GetAllServices(w http.ResponseWriter, r *http.Request)  {}
+
+func (sc *ServiveC)GetAllCategories(w http.ResponseWriter, r *http.Request) {
+
+  categories, err := sc.Cs.GetAllCategories()
+  if err!= nil {
+    InternalServerError(w)
+    return 
+  }
+  utils.Encode(w, categories)
 }

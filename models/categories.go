@@ -9,8 +9,8 @@ import (
 type Category struct {
 	ID          int        `json:"id,omitempty"`
 	Name        string     `json:"name,omitempty"`
-	Description string     `json:"description,omitempty"`
-	CreatedAt   *time.Time `json:"created_at,omitempty"`
+	Description string     `json:"-"`
+	CreatedAt   *time.Time `json:"-"`
 }
 
 type CategoryManager struct {
@@ -26,4 +26,22 @@ func (cm *CategoryManager)SearchCategory(name string)(*Category, error)  {
 		return nil, err
 	}
 	return &category, nil
+}
+
+func (cm *CategoryManager)GetAllCategories() ([]Category, error) {
+	var categories []Category
+  rows, err := cm.DB.Query(`SELECT * FROM categories`)
+  if err!= nil {
+    return nil, err
+  }
+  for rows.Next() {
+    var category Category
+    err := rows.Scan(&category.ID, &category.Name, &category.Description, &category.CreatedAt)
+    if err!= nil {
+      return nil, err
+    }
+    categories = append(categories, category)
+  }
+  return categories, nil
+
 }

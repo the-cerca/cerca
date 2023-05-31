@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	m "github.com/aleeXpress/cerca/models"
@@ -18,7 +19,8 @@ type UserC struct {
 func (usc *UserC) SignUp(w http.ResponseWriter, r *http.Request) {
 	var user m.NewUser
 	json.NewDecoder(r.Body).Decode(&user)
-	u, err := usc.Us.SignUp(user.Firstname, user.Lastname, user.Username, user.Password, user.Email, user.Birthday)
+	fmt.Println(user.Birthday)
+	u, err := usc.Us.SignUp(user.Firstname, user.Lastname, user.Username, user.Password, user.Email, *user.Birthday)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
